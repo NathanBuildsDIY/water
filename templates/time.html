@@ -1,0 +1,13 @@
+<title>Solar Waterer Control - Set Current Time</title>
+<html>
+  <body>
+    <form method="post">
+      <p>System currently thinks the time is (24 hour format):</p>
+      <p>{{ form.hidden_tag() }}</p>
+      <p>{{ datetime }}</p>
+      <p>If the system lost battery power, it also lost the time. If the current time is wrong correct it here, then return to the main page to check:</p>
+      <p>{{ form.currentTime }}</p>
+      <input type="submit">
+    </form>
+  </body>
+</html>

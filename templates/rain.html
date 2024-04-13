@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 450px; /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+</style>
+</head>
+<body>
+
+<form method="post">
+<h2>Watering Schedule</h2>
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+    <h2>Zone 1</h2>
+    <p>Days to water:</p>
+    <p>{{ form.hidden_tag() }}</p>
+    <p>{{ form.days1 }}</p>
+    <p>Start Time:</p>
+    <p>{{ form.startTime1 }}</p>
+    <p>Stop Time:</p>
+    <p>{{ form.endTime1 }}</p>
+  </div>
+  <div class="column" style="background-color:#bbb;">
+    <h2>Zone 2</h2>
+    <p>Days to water:</p>
+    <p>{{ form.hidden_tag() }}</p>
+    <p>{{ form.days2 }}</p>
+    <p>Start Time:</p>
+    <p>{{ form.startTime2 }}</p>
+    <p>Stop Time:</p>
+    <p>{{ form.endTime2 }}</p>
+  </div>
+</div>
+<input type="submit">
+<h3>The current program is:</h3>
+<p>Zone 1: Run on days: {{ savedDaysTem1 }}.  Start at: {{ savedStartTimeTem1 }} End at: {{ savedEndTimeTem1 }}</p>
+<p>Zone 2: Run on days: {{ savedDaysTem2 }}.  Start at: {{ savedStartTimeTem2 }} End at: {{ savedEndTimeTem2 }}</p>
+<p>System time is (24 hour format): {{ datetime }}</p>
+<p>If power was lost, system time will be wrong. Correct it by going to /time URL:</p>
+</form>
+
+</body>
+</html>
