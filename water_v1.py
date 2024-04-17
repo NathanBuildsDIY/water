@@ -13,11 +13,11 @@ args = parser.parse_args()
 #pump = AngularServo(10, initial_angle=0, min_angle=0, max_angle=180, min_pulse_width=4/10000, max_pulse_width=25/10000,pin_factory=factory)
 #pump = PWMLED(12, initial_value = 0, pin_factory = factory) #only if factory works - pi zero
 
-pump = LED(12)
+pump = LED(17)
 if args.zone == 1:
-  zoneValve = LED(13)
+  zoneValve = LED(27)
 if args.zone == 2:
-  zoneValve = LED(14)
+  zoneValve = LED(22)
   
 now = datetime.datetime.now()
 print("starting pump now for these seconds: ",args.seconds)
