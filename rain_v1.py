@@ -1,5 +1,6 @@
 #TO DO: Ensure short enough watering time and non conflict on water times (separate by at least a minute)
 #TO DO: add /static/css/style.css and make it look pretty
+#TO DO: Allow /time to also set day of week. radio button, convert to date/year/month.  Show what day it thinks it is now
 
 import os
 from glob import glob
@@ -34,7 +35,7 @@ def createCrons(days,startTime,endTime,zone):
   print("days are: ",daysFormatted)
   print("minutes are: ",startTime.minute," hours are: ",startTime.hour)
   #min hour * * day,day,day command
-  job = cron.new(command="python3 ~/Desktop/rain/water_v1.py --seconds "+str(runTimeSeconds)+" --zone "+str(zone), comment="Watering Zone "+str(zone))
+  job = cron.new(command="python3 ~/rain/water_v1.py --seconds "+str(runTimeSeconds)+" --zone "+str(zone), comment="Watering Zone "+str(zone))
   job.minute.on(str(startTime.minute))
   job.hour.on(str(startTime.hour))
   for dow in days:
