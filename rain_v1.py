@@ -1,6 +1,8 @@
 #TO DO: Ensure short enough watering time and non conflict on water times (separate by at least a minute)
 #TO DO: add /static/css/style.css and make it look pretty
 #TO DO: Allow /time to also set day of week. radio button, convert to date/year/month.  Show what day it thinks it is now
+#TO DO: read crontab to get current program even after loss of power
+#TO DO: resize panel/battery to not lose power
 
 import os
 from glob import glob
