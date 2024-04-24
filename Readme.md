@@ -8,7 +8,7 @@ install git on your raspberry pi: sudo apt-get -y install git
 
 clone this git repository to your pi home directory: git clone https://github.com/NathanBuildsDIY/water.git
 
-Run initial setup: nohup sh rain/initial-setup.sh & Note - you can watch the output with: tail -f nohup.out
+Run initial setup: nohup sh water/initial-setup.sh & Note - you can watch the output with: tail -f nohup.out
 
 Connect to the new wifi hostpot called rain. Visit http://rain.local/run to control your watering robot. 
 
