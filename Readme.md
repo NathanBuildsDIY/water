@@ -6,7 +6,7 @@ If you log in via ssh and it hangs, improve ssh response times with this command
 
 install git on your raspberry pi: sudo apt-get -y install git
 
-clone this git repository to your pi home directory: git clone https://github.com/NathanBuildsDIY/rain
+clone this git repository to your pi home directory: git clone https://github.com/NathanBuildsDIY/water.git
 
 Run initial setup: nohup sh rain/initial-setup.sh & Note - you can watch the output with: tail -f nohup.out
 
