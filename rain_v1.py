@@ -39,7 +39,7 @@ def createCrons(days,startTime,endTime,zone):
   print("days are: ",daysFormatted)
   print("minutes are: ",startTime.minute," hours are: ",startTime.hour)
   #min hour * * day,day,day command
-  job = cron.new(command="python3 ~/rain/water_v1.py --seconds "+str(runTimeSeconds)+" --zone "+str(zone), comment="Watering Zone "+str(zone))
+  job = cron.new(command="python3 ~/water/water_v1.py --seconds "+str(runTimeSeconds)+" --zone "+str(zone), comment="Watering Zone "+str(zone))
   job.minute.on(str(startTime.minute))
   job.hour.on(str(startTime.hour))
   for dow in days:
@@ -61,7 +61,7 @@ def deleteCrons():
 def readCrons():
   global savedMinute, savedHour, savedDays, savedRuntime, zones
   cron = CronTab(user=getpass.getuser())
-  jobs = cron.find_command('rain/water')
+  jobs = cron.find_command('water/water')
   index = 1
   for job in jobs:
     jobText=str(job)
@@ -114,8 +114,8 @@ def run():
     print(form.errors)
   readCrons()
   return render_template('rain.html',datetime = str(datetime.now().strftime("%H:%M")),
-    savedDaysTem1=savedDays[1],savedStartTimeTem1=savedHour[1]+":"+savedMinute[1],savedRuntimeTem1=savedRuntime[1],
-    savedDaysTem2=savedDays[2],savedStartTimeTem2=savedHour[2]+":"+savedMinute[2],savedRuntimeTem2=savedRuntime[2],form=form)
+    savedDaysTem1=str(savedDays[1]),savedStartTimeTem1=str(savedHour[1])+":"+str(savedMinute[1]),savedRuntimeTem1=str(savedRuntime[1]),
+    savedDaysTem2=str(savedDays[2]),savedStartTimeTem2=str(savedHour[2])+":"+str(savedMinute[2]),savedRuntimeTem2=str(savedRuntime[2]),form=form)
 
 @app.route('/time',methods=['post','get'])
 def time():
