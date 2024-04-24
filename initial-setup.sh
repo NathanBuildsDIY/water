@@ -24,7 +24,7 @@ sudo apt-get -y install dnsutils
 echo 'address=/.local/10.42.0.1' | sudo tee -a /etc/NetworkManager/dnsmasq-shared.d/hosts.conf
 
 echo "create entry in crontab to always run rain app on startup"
-line="@reboot python3 -m flask --app ~/rain/rain_v1.py run --host=0.0.0.0 >> ~/rain/log/log.out"
+line="@reboot python3 -m flask --app ~/water/rain_v1.py run --host=0.0.0.0 >> ~/water/log/log.out"
 (crontab -u $(whoami) -l; echo "$line" ) | crontab -u $(whoami) -
 
 echo "Install flask and associated forms packages"
@@ -36,8 +36,16 @@ pip3 install psutil
 pip3 install python-crontab
 
 echo "set up iptables and rules"
-line="@reboot /usr/bin/sh /home/$(whoami)/rain/iptables.rules"
+line="@reboot /usr/bin/sh /home/$(whoami)/water/iptables.rules"
 sudo sh -c "(crontab -l; echo $line) | sort - | uniq | crontab -"
+
+echo "reduce power consumption"
+sudo sed -i 's/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g' /boot/config.txt #same as raspi-config advanced->gldriver->g1 legacy
+sudo sed -i '/fi/a /usr/bin/tvservice -o' /etc/rc.local #disable hdmi on boot. -p to reenable
+# Disable the ACT LED on the Pi Zero. Didn't work, only a few ma. hdmi is bigger.
+#echo "dtparam=act_led_trigger=none" | sudo tee -a /boot/config.txt
+#echo "dtparam=act_led_activelow=on" | sudo tee -a /boot/config.txt
+#sudo sed -i '/fi/a echo none | sudo tee /sys/class/leds/led0/trigger' /etc/rc.local
 
 echo "setup local wifi hotspot"
 sudo systemctl stop dhcpcd
