@@ -22,12 +22,11 @@ from flask_autoindex import AutoIndex
 from crontab import CronTab
 import getpass
 
-savedDays1="None"
-savedStartTime1=datetime.now() #.strftime("%H:%M:%S")
-savedEndTime1=datetime.now() #.strftime("%H:%M:%S")
-savedDays2="None"
-savedStartTime2=datetime.now() #.strftime("%H:%M:%S")
-savedEndTime2=datetime.now() #.strftime("%H:%M:%S")
+zones=2 #create arrays below beyond 2, up to 16. But this limits how many we print. Zone 0 is not used.
+savedMinute=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+savedHour=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+savedRuntime=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+savedDays=["","","","","","","","","","","","","","","",""]
 
 def createCrons(days,startTime,endTime,zone):
   print("creating crons now")
@@ -59,6 +58,19 @@ def deleteCrons():
   #    cron.remove( job )
   #cron.remove_all('water_v1.py')
   #cron.remove_all(comment='Watering Zone')
+def readCrons():
+  global savedMinute, savedHour, savedDays, savedRuntime, zones
+  cron = CronTab(user=getpass.getuser())
+  jobs = cron.find_command('rain/water')
+  index = 1
+  for job in jobs:
+    jobText=str(job)
+    jobTextArray=jobText.split()
+    savedMinute[index]=str(job.minute)
+    savedHour[index]=str(job.hour)
+    savedDays[index]=str(job.dow)
+    savedRuntime[index]=str(jobTextArray[8])
+    index = index + 1
 def resetCurrentTime(currentTime):
   print("Setting system time to: ",currentTime.strftime("%H:%M"))
   date_cmd = 'sudo date --set=\"20240410 '+str(currentTime.hour)+':'+str(currentTime.minute)+'\"'
@@ -84,7 +96,7 @@ class timeForm(FlaskForm):
 
 @app.route('/',methods=['post','get'])
 def run():
-  global savedDays1, savedStartTime1, savedEndTime1, savedDays2, savedStartTime2, savedEndTime2, job1, job2
+  global savedMinute, savedHour, savedRuntime, savedDays, zones, job1, job2
   form = rainForm()
   if form.validate_on_submit():
     print("Raw input values are:")
@@ -94,22 +106,16 @@ def run():
     print(form.days2.data)
     print(form.startTime2.data)
     print(form.endTime2.data)
-    #Save off the current values for later use
-    savedDays1=form.days1.data
-    savedStartTime1=form.startTime1.data
-    savedEndTime1=form.endTime1.data
-    savedDays2=form.days2.data
-    savedStartTime2=form.startTime2.data
-    savedEndTime2=form.endTime2.data
     #Check for errors and do the work
     deleteCrons()
     createCrons(form.days1.data,form.startTime1.data,form.endTime1.data,1)
     createCrons(form.days2.data,form.startTime2.data,form.endTime2.data,2)
   else:
     print(form.errors)
+  readCrons()
   return render_template('rain.html',datetime = str(datetime.now().strftime("%H:%M")),
-    savedDaysTem1=str(savedDays1),savedStartTimeTem1=savedStartTime1.strftime("%H:%M"),savedEndTimeTem1=savedEndTime1.strftime("%H:%M"),
-    savedDaysTem2=str(savedDays2),savedStartTimeTem2=savedStartTime2.strftime("%H:%M"),savedEndTimeTem2=savedEndTime2.strftime("%H:%M"),form=form)
+    savedDaysTem1=savedDays[1],savedStartTimeTem1=savedHour[1]+":"+savedMinute[1],savedRuntimeTem1=savedRuntime[1],
+    savedDaysTem2=savedDays[2],savedStartTimeTem2=savedHour[2]+":"+savedMinute[2],savedRuntimeTem2=savedRuntime[2],form=form)
 
 @app.route('/time',methods=['post','get'])
 def time():
