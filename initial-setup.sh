@@ -39,18 +39,32 @@ echo "set up iptables and rules"
 line="@reboot /usr/bin/sh /home/$(whoami)/water/iptables.rules"
 sudo sh -c "(crontab -l; echo $line) | sort - | uniq | crontab -"
 
+sudo apt-get -y install python3-smbus i2c-tools
+sudo i2cdetect -y 1
+echo 'dtoverlay=i2c-rtc,pcf8523' | sudo tee -a /boot/config.txt #add the pcf RTC chip
+sudo raspi-config nonint do_i2c 0 #enable i2c
+
+#disable fake clock
+sudo apt-get -y remove fake-hwclock
+sudo update-rc.d -f fake-hwclock remove #failed until after reboot?
+sudo systemctl disable fake-hwclock #failed until after reboot?
+
+sudo sed -i 's/^if/#&/' /lib/udev/hwclock-set
+sudo sed -i 's/^    exit/#&/' /lib/udev/hwclock-set
+sudo sed -i 's/^fi/#&/' /lib/udev/hwclock-set
+sudo sed -i 's/\/sbin\/hwclock --rtc= --systz/#&/' /lib/udev/hwclock-set
+
+sudo hwclock -w #failed until after reboot?
+sudo hwclock -r #failed until after reboot?
+#sudo systemctl disable systemd-timesyncd.service #to disable internet time sync
 echo "reduce power consumption"
 sudo sed -i 's/dtoverlay=vc4-kms-v3d/#dtoverlay=vc4-kms-v3d/g' /boot/config.txt #same as raspi-config advanced->gldriver->g1 legacy
 sudo sed -i '/fi/a /usr/bin/tvservice -o' /etc/rc.local #disable hdmi on boot. -p to reenable
-# Disable the ACT LED on the Pi Zero. Didn't work, only a few ma. hdmi is bigger.
-#echo "dtparam=act_led_trigger=none" | sudo tee -a /boot/config.txt
-#echo "dtparam=act_led_activelow=on" | sudo tee -a /boot/config.txt
-#sudo sed -i '/fi/a echo none | sudo tee /sys/class/leds/led0/trigger' /etc/rc.local
 
 echo "setup local wifi hotspot"
 sudo systemctl stop dhcpcd
 sudo systemctl disable dhcpcd
-sudo systemctl enable NetworkManager 
+sudo systemctl enable NetworkManager
 sudo service NetworkManager start
 sleep 20
 sudo nmcli device wifi hotspot ssid water password LetsWater ifname wlan0
@@ -59,3 +73,4 @@ sudo nmcli connection modify $UUID connection.autoconnect yes connection.autocon
 
 echo "restarting for changes to take effect. Still must run wifi setup"
 sudo shutdown -r now
+
